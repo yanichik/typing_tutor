@@ -143,7 +143,7 @@ char *selectChallenge(){
 				}
 				break;
 			}
-		}
+		} 
 		strcpy(choice+strlen(choice), ".txt");
 	}
 	wrefresh(stdscr);
