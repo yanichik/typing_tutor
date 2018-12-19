@@ -151,6 +151,7 @@ char *selectChallenge(){
 	//~ printw("%s", choice+3);
 	//~ refresh();
 	//~ getch();
+	fclose(fp);
 	return (choice+3);
 }
 int playChallenge(char *challengeChoice){
@@ -196,7 +197,7 @@ int playChallenge(char *challengeChoice){
 	// function to read user input & compare to challenge text
 	// records speed & accuracy
 	// typeCompare
-	
+	fclose(fp);
 	return 1;
 }
 	
