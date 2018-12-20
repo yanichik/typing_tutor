@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gcc -g -o typingTutor typingTutor.c -lncurses
