@@ -16,7 +16,7 @@ int main(){
 	FILE *fp = fopen("./challenges/samples/plato.txt", "r");
 	char ch;
 	long int i = 0, j = 0, flength, charcnt = 0, lnsize;
-	//~ long int lines;
+	long int lines;
 	int x_cur = 0, y_cur = 0;
 	while ((ch = fgetc(fp)) != EOF){
 		if (ch == '\n'){
@@ -28,7 +28,7 @@ int main(){
 	x_cur = i+5;
 	//~ fseek(fp, 0L, SEEK_END);
 	flength = fileSize(fp);
-	//~ lines = i;
+	lines = i;
 	// initialize typing guide
 	i=0;
 	lnsize = lineSize(i, fp);
@@ -42,17 +42,19 @@ int main(){
 			mvdelch(x_cur-1, y_cur);
 		if ( ch == DEL ){
 			if(j > 0){ // if text not at beg of line
-				if (i == 0){
-					mvdelch(i+1, j--);
-					mvdelch(x_cur, y_cur--);
-					mvaddch(i+1, j, ARR);
-					move(x_cur, y_cur);
-				}
+				mvdelch(i*2+1, j--);
+				mvdelch(x_cur, y_cur);
+				if (y_cur > 0)
+					y_cur--;
+				else x_cur--;
+				mvaddch(i*2+1, j, ARR);
+				move(x_cur, y_cur);
 			}
 			else if (j == 0 && i > 0){ // if text at beg of line but not at 0th line
-				mvdelch(i--, j);
-				j = lineSize(i, fp)+1;
-				mvaddch(i, j, ARR);
+				mvdelch(i*2+1, j);
+				i--;
+				j = lnsize = lineSize(i, fp);
+				mvaddch(i*2+1, j, ARR);
 				mvdelch(x_cur, y_cur);
 				if (y_cur == 0){
 					x_cur--;
@@ -67,79 +69,71 @@ int main(){
 			}
 			else if (j == 0 && i == 0) // curr at beg of doc
 				continue;
+			else ;
 		}
 		else if((isalnum(ch) || isspace(ch) || ispunct(ch)) && (ch != ESC)){
-			//~ if (i <= lines)
-			//~ {
-				if (ch != '\n')
-				{
-					if (i == 0){
-						mvdelch(i+1, j);
-						move(i+1, ++j);
-						printw("%c", ARR);
-						mvprintw(x_cur, y_cur++, "%c", ch);
-						charcnt++;
+			if (ch != '\n')
+			{
+				if (i == 0){
+					mvdelch(i*2+1, j);
+					move(i*2+1, ++j);
+					printw("%c", ARR);
+					mvprintw(x_cur, y_cur++, "%c", ch);
+					charcnt++;
+				}
+				else {
+					if (i < 2){
+						mvdelch(i*2+1, j);
+						move(i*2+1, ++j);
 					}
 					else {
-						if (i < 2){
-							mvdelch(i+2, j);
-							move(i+2, ++j);
-						}
-						else {
-							mvdelch(i+3, j);
-							move(i+3, ++j);
-						}							
-						printw("%c", ARR);
-						mvprintw(x_cur, y_cur++, "%c", ch);
-						charcnt++;
-					}
+						mvdelch(i*2+1, j);
+						move(i*2+1, ++j);
+					}						
+					printw("%c", ARR);
+					mvprintw(x_cur, y_cur++, "%c", ch);
+					charcnt++;
 				}
-				else if (ch == '\n'){
-					if (i == 0 && j == lnsize){ // if on 0th line and at end of line
-						mvdelch(i+1, j);
-						j = 0;
-						move(i+3, j);
-						i++;
-						printw("%c", ARR);
-						mvprintw(x_cur++, y_cur, "%c", ch);
-						y_cur = 0;						
-						//~ charcnt++;
-					}
-					else if (i > 0 && j == lnsize){ // if at end of any line except 0th
-						mvdelch(i+2, j);
-						i++;
-						j = 0;
-						move(i+3, j);
-						printw("%c", ARR);
-						mvprintw(x_cur++, y_cur, "%c", ch);
-						y_cur = 0;
-						//~ // charcnt++;
-					}
-					else {
-						mvdelch(i+1, j-1);
-						if (i==0){
-							move(i+1, j);
-							printw("%c", ARR);
-						}
-						else {
-							move(i+2, j);
-							printw("%c", ARR);
-						}
-						x_cur++;
-						y_cur = 0;
-						move(x_cur, y_cur);
-						//~ charcnt++;
-					}					
+			}
+			else if (ch == '\n'){
+				if (i == 0 && j == lnsize){ // if on 0th line and at end of line
+					mvdelch(i*2+1, j);
+					j = 0;
+					i++;
+					move(i*2+1, j);
+					printw("%c", ARR);
+					mvprintw(x_cur++, y_cur, "%c", ch);
+					y_cur = 0;						
+					//~ charcnt++;
 				}
-				//~ else if (j == lnsize){
-					//~ j = 0;
-					//~ i++;
-			lnsize = lineSize(i, fp);
-				//~ }
-			//~ }
-			//~ if (ch == '\n')
-				//~ move(y_cur+1, 0);
-			//~ else move(y_cur, x_cur+1);
+				else if (i > 0 && j == lnsize){ // if at end of any line except 0th
+					mvdelch(i*2+1, j);
+					i++;
+					j = 0;
+					move(i*2+1, j);
+					printw("%c", ARR);
+					mvprintw(x_cur++, y_cur, "%c", ch);
+					y_cur = 0;
+					//~ // charcnt++;
+				}
+				else {	// if press enter in middle of line (before reaching end of text)
+					mvdelch(i*2+1, j);
+					j++;
+					move(i*2+1, j);
+					printw("%c", ARR);
+					refresh();
+					
+					}
+				x_cur++;
+				y_cur = 0;
+				move(x_cur, y_cur);
+				//~ charcnt++;				
+			}
+			else;
+			
+			if (i < lines){
+				lnsize = lineSize(i, fp);
+			}
 		}
 	} while (ch != ESC);
 	printw("\n%d", i);
