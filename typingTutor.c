@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ncurses.h>
+#include "typeCompare.h"
 
 #define MAX 6
 #define MIN 1
@@ -179,21 +180,24 @@ int playChallenge(char *challengeChoice){
 	echo();
 	scanw("%d", &lines);
 	clear();
-	for (i = 0; i < lines; i++)
-	{
-		while ((ch = fgetc(fp)) != '\n'){
-			if (ch == EOF)
-				break;
-			printw("%c", ch);
-		}
-		if (ch == EOF)
-			break;	
-		printw("\n");
-	}
+	//~ for (i = 0; i < lines; i++)
+	//~ {
+		//~ while ((ch = fgetc(fp)) != '\n'){
+			//~ if (ch == EOF)
+				//~ break;
+			//~ printw("%c", ch);
+		//~ }
+		//~ if (ch == EOF)
+			//~ break;	
+		//~ printw("\n");
+	//~ }
+	printw("Remember to press \"escape\" to complete challenge or stop time.\n\n\n");
+	getch();
 	printw("\nPress \"enter\" when you're ready to start.");
 	getch();
-	printw("Press \"escape\" to complete challenge.\n\n\n");
-	getch();
+	clear();
+	typeCompare(lines, challengeFilePath);
+	clear();
 	// function to read user input & compare to challenge text
 	// records speed & accuracy
 	// typeCompare
