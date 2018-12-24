@@ -5,13 +5,14 @@
 
 #define ARR 94
 #define ESC 27
+#define DEL 127
 
 long int lineSize(int line, FILE *fp);
 long int fileSize(FILE *fp);
 int main(){
 	initscr();
 	cbreak();
-	echo();
+	noecho();
 	FILE *fp = fopen("./challenges/samples/plato.txt", "r");
 	char ch;
 	long int i = 0, j = 0, flength, charcnt = 0, lnsize;
@@ -39,12 +40,14 @@ int main(){
 		ch = getch();
 		if (ch == ESC)
 			mvdelch(x_cur-1, y_cur);
-		if ( ch == 127 ){
+		if ( ch == DEL ){
 			if(j > 0){ // if text not at beg of line
-				mvdelch(i, j--);
-				mvdelch(x_cur, y_cur--);
-				mvaddch(i, j, ARR);
-				move(x_cur, y_cur);
+				if (i == 0){
+					mvdelch(i+1, j--);
+					mvdelch(x_cur, y_cur--);
+					mvaddch(i+1, j, ARR);
+					move(x_cur, y_cur);
+				}
 			}
 			else if (j == 0 && i > 0){ // if text at beg of line but not at 0th line
 				mvdelch(i--, j);
@@ -74,14 +77,20 @@ int main(){
 						mvdelch(i+1, j);
 						move(i+1, ++j);
 						printw("%c", ARR);
-						move(x_cur, ++y_cur);
+						mvprintw(x_cur, y_cur++, "%c", ch);
 						charcnt++;
 					}
 					else {
-						mvdelch(i+2, j);
-						move(i+2, ++j);
+						if (i < 2){
+							mvdelch(i+2, j);
+							move(i+2, ++j);
+						}
+						else {
+							mvdelch(i+3, j);
+							move(i+3, ++j);
+						}							
 						printw("%c", ARR);
-						move(x_cur, ++y_cur);
+						mvprintw(x_cur, y_cur++, "%c", ch);
 						charcnt++;
 					}
 				}
@@ -92,18 +101,19 @@ int main(){
 						move(i+3, j);
 						i++;
 						printw("%c", ARR);
-						y_cur = 0;
-						move(++x_cur, y_cur);
+						mvprintw(x_cur++, y_cur, "%c", ch);
+						y_cur = 0;						
 						//~ charcnt++;
 					}
-					else if (i > 0 && j == lnsize+1){ // if any end of any line except 0th
-						mvdelch(i+1, j-1);
+					else if (i > 0 && j == lnsize){ // if at end of any line except 0th
+						mvdelch(i+2, j);
 						i++;
 						j = 0;
-						move(i+2, j);
+						move(i+3, j);
 						printw("%c", ARR);
-						move(x_cur, y_cur+1);
-						//~ charcnt++;
+						mvprintw(x_cur++, y_cur, "%c", ch);
+						y_cur = 0;
+						//~ // charcnt++;
 					}
 					else {
 						mvdelch(i+1, j-1);
@@ -124,7 +134,7 @@ int main(){
 				//~ else if (j == lnsize){
 					//~ j = 0;
 					//~ i++;
-					//~ lnsize = lineSize(i, fp);
+			lnsize = lineSize(i, fp);
 				//~ }
 			//~ }
 			//~ if (ch == '\n')
@@ -133,6 +143,7 @@ int main(){
 		}
 	} while (ch != ESC);
 	printw("\n%d", i);
+	refresh();
 	return 0;
 }
 
