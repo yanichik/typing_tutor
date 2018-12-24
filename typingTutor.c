@@ -180,18 +180,7 @@ int playChallenge(char *challengeChoice){
 	echo();
 	scanw("%d", &lines);
 	clear();
-	//~ for (i = 0; i < lines; i++)
-	//~ {
-		//~ while ((ch = fgetc(fp)) != '\n'){
-			//~ if (ch == EOF)
-				//~ break;
-			//~ printw("%c", ch);
-		//~ }
-		//~ if (ch == EOF)
-			//~ break;	
-		//~ printw("\n");
-	//~ }
-	printw("Remember to press \"escape\" to complete challenge or stop time.\n\n\n");
+	printw("Remember to press \"escape\" to complete challenge or stop time.\n");
 	getch();
 	printw("\nPress \"enter\" when you're ready to start.");
 	getch();
