@@ -32,7 +32,7 @@ double typeCompare(int num_lines, char *file_path){
 		}
 		printw("%c", ch);
 	}
-	x_cur = i+5;
+	x_cur = 2*i+3;
 	//~ fseek(fp, 0L, SEEK_END);
 	flength = fileSize(fp);
 	lines = i;
