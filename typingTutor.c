@@ -156,10 +156,11 @@ char *selectChallenge(){
 	return (choice+3);
 }
 int playChallenge(char *challengeChoice){
+	double time_taken;
 	clear();
-	printw("%s",challengeChoice);
+	//~ printw("%s",challengeChoice);
 	refresh();
-	getch();
+	//~ getch();
 	clear();
 	int lines, i;
 	char ch;
@@ -185,7 +186,10 @@ int playChallenge(char *challengeChoice){
 	printw("\nPress \"enter\" when you're ready to start.");
 	getch();
 	clear();
-	typeCompare(lines, challengeFilePath);
+	time_taken = typeCompare(lines, challengeFilePath);
+	clear();
+	printw("It took you %f\n", time_taken);
+	getch();
 	clear();
 	// function to read user input & compare to challenge text
 	// records speed & accuracy

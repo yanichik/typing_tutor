@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <ctype.h>
+#include <time.h>
 
 #define ARR 94
 #define ESC 27
@@ -9,14 +10,16 @@
 
 long int lineSize(int line, FILE *fp);
 long int fileSize(FILE *fp);
-int typeCompare();
+double typeCompare();
 
-int typeCompare(int num_lines, char *file_path){
+double typeCompare(int num_lines, char *file_path){
 	FILE *fp = fopen(file_path, "r");
 	char ch;
 	long int i = 0, j = 0, flength, charcnt = 0, lnsize;
 	long int lines;
 	int x_cur = 0, y_cur = 0;
+	clock_t t;
+	//~ double time_taken;
 	
 	// initialize screen, input mode, and noecho
 	initscr();
@@ -39,6 +42,7 @@ int typeCompare(int num_lines, char *file_path){
 	mvaddch(i+1,j,ARR);
 	refresh();
 	move(x_cur, y_cur);
+	t = clock();
 	do
 	{
 		ch = getch();
@@ -140,9 +144,13 @@ int typeCompare(int num_lines, char *file_path){
 			}
 		}
 	} while (ch != ESC);
-	printw("\n%d", i);
+	t = clock() - t;
+	//~ printw("\n%d", i);
 	refresh();
-	return 0;
+	float time_taken = ((float)t)/CLOCKS_PER_SEC;
+	printw("It took you %.2f seconds\n", time_taken);
+	getch();
+	return (((double)t)/CLOCKS_PER_SEC);
 }
 
 long int lineSize(int line, FILE *fp){

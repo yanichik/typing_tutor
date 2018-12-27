@@ -1,3 +1,23 @@
-The C library
-whether the passed
-character is white-space.
+Plato is one of the world's best known and most widely read and studied
+philosophers. He was the student of Socrates and the teacher of Aristotle,
+and he wrote in the middle of the fourth century B.C.E. in ancient Greece.
+Though influenced primarily by Socrates, to the extent that Socrates is usually
+the main character in many of Plato's writings, he was also influenced by Heraclitus,
+Parmenides, and the Pythagoreans. There are varying degrees of controversy over which
+of Plato's works are authentic, and in what order they were written, due to their
+antiquity and the manner of their preservation through time. Nonetheless, his earliest
+works are generally regarded as the most reliable of the ancient sources on Socrates,
+and the character Socrates that we know through these writings is considered to be one
+of the greatest of the ancient philosophers. Plato's middle to later works, including
+his most famous work, the Republic, are generally regarded as providing Plato's own
+philosophy, where the main character in effect speaks for Plato himself. These works
+blend ethics, political philosophy, moral psychology, epistemology, and metaphysics
+into an interconnected and systematic philosophy. It is most of all from Plato that we get
+the theory of Forms, according to which the world we know through the senses is only an
+imitation of the pure, eternal, and unchanging world of the Forms. Plato's works also
+contain the origins of the familiar complaint that the arts work by inflaming the passions,
+and are mere illusions. We also are introduced to the ideal of "Platonic love:" Plato saw
+love as motivated by a longing for the highest Form of beauty—The Beautiful Itself, and
+love as the motivational power through which the highest of achievements are possible.
+Because they tended to distract us into accepting less than our highest potentials, however,
+Plato mistrusted and generally advised against physical expressions of love.
