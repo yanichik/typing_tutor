@@ -28,7 +28,8 @@ int main(void){
 				challengeChoice = selectChallenge();
 				printw("You chose: %s", challengeChoice);
 				refresh();
-				playChallenge(challengeChoice);
+				if (challengeChoice)
+					playChallenge(challengeChoice);
 				break;
 			case 1:
 				// Select User
@@ -56,12 +57,12 @@ int mainMenu(){
 	int h, w, i;
 	int keyPressed = 0;
     int position = 0;
-	char *options[] = {"1. Select Challenge", "2. Select User", "3. Statistics", "4. View User Records", "5. About", "6. Exit"};
-	
-	//~ move(0, 1);
-	//~ printw("  >> Use UP & DOWN arrows to traverse menu options");
-	//~ wrefresh(stdscr);	
-	
+	char *options[] = {	"1. Select Challenge",
+						"2. Select User",
+						"3. Statistics",
+						"4. View User Records",
+						"5. About",
+						"6. Exit"};
 	initscr();	// initialize screen
 	cbreak();	// disables line buffering & erase/kill char processing
 	noecho();	// does not echo key entrances, good for interactive display
@@ -125,27 +126,41 @@ char *selectChallenge(){
 	noecho();
 	fp = fopen("./challenges/challengeList.txt", "r");
 	if (fp == NULL){
-		printw("No file exists. Need to generate list file");
+		printw("List file doesn't exist. Generate list file & try again.");
 		refresh();
 		return NULL;
 	}
 	else {
 		printw("Choose a file # from the following\n\n");
-		while ((ch = fgetc(fp)) != EOF){
+		while ((ch = fgetc(fp)) != EOF){	// print list of challenge options
 			printw("%c", ch);
 		}
 		scanw("%c", &num);
 		fseek(fp, 0L, SEEK_SET);
 		while ((ch = fgetc(fp)) != EOF){
+			//~ printw("%c", ch);
 			if (ch == num){
-				fseek(fp, ftell(fp)-2, SEEK_CUR);
+				//~ printw("\n%c\n", ch);
+				//~ refresh();
+				//~ getch();
+				fseek(fp, 2L, SEEK_CUR);
+				//printw("%lu\n", SEEK_CUR);
+				//~ refresh();
+				//~ getch();
 				while ((ch = fgetc(fp)) != '\n'){
+					//~ printw("%c ", ch);
 					choice[i++] = ch;
+					//~ printw("%c\n", choice[i-1]);
+					//~ refresh();
+					//~ getch();
 				}
 				break;
 			}
-		} 
+		}
 		strcpy(choice+strlen(choice), ".txt");
+		//~ printw("\n%s\n", choice);
+		//~ refresh();
+		//~ getch();
 	}
 	wrefresh(stdscr);
 	clear();
@@ -153,7 +168,7 @@ char *selectChallenge(){
 	//~ refresh();
 	//~ getch();
 	fclose(fp);
-	return (choice+3);
+	return (choice);
 }
 int playChallenge(char *challengeChoice){
 	double time_taken;
@@ -162,8 +177,8 @@ int playChallenge(char *challengeChoice){
 	refresh();
 	//~ getch();
 	clear();
-	int lines, i;
-	char ch;
+	int lines; //, i;
+	//~ char ch;
 	size_t sz = strlen(challengeChoice);
 	char *samplesDir = "./challenges/samples/";
 	char *challengeFilePath = (char *)malloc(strlen(samplesDir)+sz);
