@@ -3,6 +3,7 @@
 #include <ncurses.h>
 #include <ctype.h>
 #include <time.h>
+#include <unistd.h>
 
 #define ARR 94
 #define ESC 27
@@ -11,14 +12,18 @@
 long int lineSize(int line, FILE *fp);
 long int fileSize(FILE *fp);
 double typeCompare();
+void printFile(FILE *fp);
 
 double typeCompare(int num_lines, char *file_path){
 	FILE *fp = fopen(file_path, "r");
+	FILE *fpc = fopen("./type_copy.txt", "w+");
 	char ch;
-	long int i = 0, j = 0, flength, charcnt = 0, lnsize;
+	long int i = 0, j = 0, charcnt = 0, lnsize;
 	long int lines;
 	int x_cur = 0, y_cur = 0;
+	long int fpc_size;
 	clock_t t;
+	//~ long int flength;
 	//~ double time_taken;
 	
 	// initialize screen, input mode, and noecho
@@ -34,46 +39,72 @@ double typeCompare(int num_lines, char *file_path){
 	}
 	x_cur = 2*i+3;
 	//~ fseek(fp, 0L, SEEK_END);
-	flength = fileSize(fp);
+	//~ flength = fileSize(fp);
+	//~ printw("%lu\n", fileSize(fpc));
 	lines = i;
 	// initialize typing guide
 	i=0;
 	lnsize = lineSize(i, fp);
 	mvaddch(i+1,j,ARR);
 	refresh();
-	move(x_cur, y_cur);
+	
 	t = clock();
 	do
 	{
+		move(x_cur, y_cur);
+		printFile(fpc);
+		refresh();
 		ch = getch();
-		if (ch == ESC)
-			mvdelch(x_cur-1, y_cur);
+		//~ clear();
+		refresh();
+		//~ if (ch == ESC)
+			//~ mvdelch(x_cur-1, y_cur);
 		if ( ch == DEL ){
 			if(j > 0){ // if text not at beg of line
 				mvdelch(i*2+1, j--);
-				mvdelch(x_cur, y_cur);
-				if (y_cur > 0)
-					y_cur--;
-				else x_cur--;
+				//~ mvdelch(x_cur, y_cur);
+				//~ if (y_cur > 0)
+					//~ y_cur--;
+				//~ else x_cur--;
 				mvaddch(i*2+1, j, ARR);
-				move(x_cur, y_cur);
+				//~ fseek(fpc, -2L, SEEK_END);
+				//~ fprintf(fpc, "%c", DEL);
+				fflush(fpc);
+				fpc_size =fileSize(fpc)-1;
+				//~ printw("%lu\n", fpc_size);
+				//~ refresh();
+				//~ getch();
+				ftruncate(fileno(fpc), fpc_size);
+				//~ fseek(fpc, 0, SEEK_END);
+				
+				//~ move(x_cur, y_cur);
 			}
 			else if (j == 0 && i > 0){ // if text at beg of line but not at 0th line
 				mvdelch(i*2+1, j);
 				i--;
 				j = lnsize = lineSize(i, fp);
 				mvaddch(i*2+1, j, ARR);
-				mvdelch(x_cur, y_cur);
-				if (y_cur == 0){
-					x_cur--;
-					y_cur = lineSize(i, fp);
-					move(x_cur, y_cur);
-				}
-				else if (y_cur > 0){
-					y_cur--;
-					move(x_cur, y_cur);
-				}
-				else ;
+				//~ mvdelch(x_cur, y_cur);
+				//~ if (y_cur == 0){
+					//~ x_cur--;
+					//~ y_cur = lineSize(i, fp);
+					//~ move(x_cur, y_cur);
+				//~ }
+				//~ else if (y_cur > 0){
+					//~ y_cur--;
+					//~ move(x_cur, y_cur);
+				//~ }
+				//~ else ;
+				//~ fseek(fpc, -2L, SEEK_END);
+				//~ fprintf(fpc, "%c", '\ ');
+				fflush(fpc);
+				fpc_size = fileSize(fpc)-1;
+				//~ printw("%lu\n", fpc_size);
+				//~ refresh();
+				//~ getch();
+				ftruncate(fileno(fpc), fpc_size);
+				//~ fseek(fpc, 0, SEEK_END);
+				
 			}
 			else if (j == 0 && i == 0) // curr at beg of doc
 				continue;
@@ -86,7 +117,9 @@ double typeCompare(int num_lines, char *file_path){
 					mvdelch(i*2+1, j);
 					move(i*2+1, ++j);
 					printw("%c", ARR);
-					mvprintw(x_cur, y_cur++, "%c", ch);
+					//~ mvprintw(x_cur, y_cur++, "%c", ch);
+					fseek(fpc, 0, SEEK_END);
+					fprintf(fpc, "%c", ch);
 					charcnt++;
 				}
 				else {
@@ -99,7 +132,9 @@ double typeCompare(int num_lines, char *file_path){
 						move(i*2+1, ++j);
 					}						
 					printw("%c", ARR);
-					mvprintw(x_cur, y_cur++, "%c", ch);
+					//~ mvprintw(x_cur, y_cur++, "%c", ch);
+					fseek(fpc, 0, SEEK_END);
+					fprintf(fpc, "%c", ch);
 					charcnt++;
 				}
 			}
@@ -110,8 +145,11 @@ double typeCompare(int num_lines, char *file_path){
 					i++;
 					move(i*2+1, j);
 					printw("%c", ARR);
-					mvprintw(x_cur++, y_cur, "%c", ch);
-					y_cur = 0;						
+					fseek(fpc, 0, SEEK_END);
+					fprintf(fpc, "%c", ch);
+					//~ mvprintw(x_cur++, y_cur, "%c", ch);
+					//~ x_cur++;
+					//~ y_cur = 0;						
 					//~ charcnt++;
 				}
 				else if (i > 0 && j == lnsize){ // if at end of any line except 0th
@@ -120,8 +158,11 @@ double typeCompare(int num_lines, char *file_path){
 					j = 0;
 					move(i*2+1, j);
 					printw("%c", ARR);
-					mvprintw(x_cur++, y_cur, "%c", ch);
-					y_cur = 0;
+					fseek(fpc, 0, SEEK_END);
+					fprintf(fpc, "%c", ch);
+					//~ mvprintw(x_cur++, y_cur, "%c", ch);
+					//~ x_cur++;
+					//~ y_cur = 0;
 					//~ // charcnt++;
 				}
 				else {	// if press enter in middle of line (before reaching end of text)
@@ -129,12 +170,16 @@ double typeCompare(int num_lines, char *file_path){
 					j++;
 					move(i*2+1, j);
 					printw("%c", ARR);
-					refresh();
-					
+					fseek(fpc, 0, SEEK_END);
+					fprintf(fpc, "%c", ch);
+					//~ mvprintw(x_cur++, y_cur, "%c", ch);
+					//~ x_cur++;
+					//~ y_cur = 0;
+					//~ refresh();
 					}
-				x_cur++;
-				y_cur = 0;
-				move(x_cur, y_cur);
+				//~ x_cur++;
+				//~ y_cur = 0;
+				//~ move(x_cur, y_cur);
 				//~ charcnt++;				
 			}
 			else;
@@ -150,6 +195,8 @@ double typeCompare(int num_lines, char *file_path){
 	float time_taken = ((float)t)/CLOCKS_PER_SEC;
 	printw("It took you %.2f seconds\n", time_taken);
 	getch();
+	fclose(fp);
+	fclose(fpc);
 	return (((double)t)/CLOCKS_PER_SEC);
 }
 
@@ -182,11 +229,26 @@ long int lineSize(int line, FILE *fp){
 long int fileSize(FILE *fp){
 	char ch;
 	long int i = 0, size = 0;
+	//~ fflush(fp);
 	fseek(fp, 0L, SEEK_SET);
+	if ( (ch = fgetc(fp)) == EOF)
+		return 0;
+	else fseek(fp, 0L, SEEK_SET);
 	while ( (ch = fgetc(fp)) != EOF){
 		if (ch == '\n')
 			i++;
 		else size++;
 	}
 	return size;
+}
+
+void printFile(FILE *fp){
+	char ch;
+	fflush(fp);
+	fseek(fp, 0L, SEEK_SET);
+	while ( (ch = fgetc(fp)) != EOF){
+		printw("%c");
+		refresh();
+	}
+
 }
